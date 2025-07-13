@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plagiarism Detector</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<style>
+    :root {
+        --matrix-green: #0aff0a;
+        --cyber-blue: #00f7ff;
+        --hacker-red: #ff0038;
+        --dark-bg: #0a0a12;
+        --darker-bg: #050508;
+        --terminal-text: #e0e0e0;
+    }
+    
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    
+    body {
+        font-family: 'Rajdhani', sans-serif;
+        background-color: var(--dark-bg);
+        color: var(--terminal-text);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        overflow-x: hidden;
+        position: relative;
+    }
+    
+    /* Matrix background effect */
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            to bottom,
+            transparent 95%,
+            rgba(10, 255, 10, 0.1) 100%
+        );
+        background-size: 100% 10px;
+        z-index: -1;
+        pointer-events: none;
+        animation: matrixLines 80s linear infinite;
+    }
+    
+    @keyframes matrixLines {
+        from { background-position: 0 0; }
+        to { background-position: 0 1000px; }
+    }
+    
+    .container {
+        width: 100%;
+        max-width: 800px;
+        background: rgba(10, 10, 20, 0.85);
+        padding: 30px;
+        border-radius: 5px;
+        box-shadow: 0 0 20px rgba(0, 247, 255, 0.3),
+                    0 0 40px rgba(0, 247, 255, 0.1),
+                    inset 0 0 15px rgba(0, 247, 255, 0.2);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0, 247, 255, 0.3);
+        animation: glowPulse 8s infinite alternate;
+    }
+    
+    @keyframes glowPulse {
+        0% { box-shadow: 0 0 20px rgba(0, 247, 255, 0.3), 0 0 40px rgba(0, 247, 255, 0.1); }
+        100% { box-shadow: 0 0 30px rgba(0, 247, 255, 0.4), 0 0 60px rgba(0, 247, 255, 0.2); }
+    }
+    
+    h1 {
+        margin-bottom: 25px;
+        color: var(--cyber-blue);
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 2.5rem;
+        text-shadow: 0 0 10px rgba(0, 247, 255, 0.7);
+        letter-spacing: 2px;
+        position: relative;
+    }
+    
+    h1::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, var(--cyber-blue), transparent);
+        animation: scanline 3s linear infinite;
+    }
+    
+    @keyframes scanline {
+        0% { left: -100%; }
+        100% { left: 150%; }
+    }
+    
+    .description {
+        color: #8a8a9e;
+        margin-bottom: 30px;
+        font-size: 1rem;
+        line-height: 1.6;
+        text-shadow: 0 0 5px rgba(138, 138, 158, 0.3);
+    }
+    
+    .input-group {
+        margin-bottom: 25px;
+        position: relative;
+    }
+    
+    textarea {
+        width: 100%;
+        height: 200px;
+        padding: 15px;
+        background: rgba(15, 15, 25, 0.7);
+        border: 1px solid rgba(0, 247, 255, 0.3);
+        border-radius: 3px;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.95rem;
+        color: var(--matrix-green);
+        resize: vertical;
+        transition: all 0.4s ease;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        text-shadow: 0 0 5px rgba(10, 255, 10, 0.5);
+    }
+    
+    textarea:focus {
+        outline: none;
+        border-color: var(--cyber-blue);
+        box-shadow: inset 0 0 15px rgba(0, 247, 255, 0.4),
+                    0 0 20px rgba(0, 247, 255, 0.2);
+        animation: textareaGlow 2s infinite alternate;
+    }
+    
+    @keyframes textareaGlow {
+        0% { box-shadow: inset 0 0 15px rgba(0, 247, 255, 0.4), 0 0 20px rgba(0, 247, 255, 0.2); }
+        100% { box-shadow: inset 0 0 20px rgba(0, 247, 255, 0.6), 0 0 30px rgba(0, 247, 255, 0.3); }
+    }
+    
+    textarea::placeholder {
+        color: #4a4a5a;
+        font-family: 'Rajdhani', sans-serif;
+    }
+    
+    button {
+        background: linear-gradient(135deg, rgba(0, 247, 255, 0.2), rgba(0, 247, 255, 0.1));
+        color: var(--cyber-blue);
+        border: 1px solid var(--cyber-blue);
+        padding: 12px 30px;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        text-transform: uppercase;
+        font-family: 'Rajdhani', sans-serif;
+        box-shadow: 0 0 15px rgba(0, 247, 255, 0.2);
+    }
+    
+    button:hover {
+        background: linear-gradient(135deg, rgba(0, 247, 255, 0.3), rgba(0, 247, 255, 0.2));
+        box-shadow: 0 0 25px rgba(0, 247, 255, 0.4);
+        transform: translateY(-2px);
+    }
+    
+    button:active {
+        transform: translateY(0);
+    }
+    
+    button::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            to bottom right,
+            transparent 45%,
+            rgba(0, 247, 255, 0.3) 50%,
+            transparent 55%
+        );
+        transform: rotate(30deg);
+        animation: buttonScan 3s linear infinite;
+    }
+    
+    @keyframes buttonScan {
+        0% { transform: translateY(-100%) rotate(30deg); }
+        100% { transform: translateY(100%) rotate(30deg); }
+    }
+    
+    .result {
+        margin-top: 25px;
+        padding: 20px;
+        border-radius: 3px;
+        font-weight: 600;
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        font-family: 'Share Tech Mono', monospace;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.5s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .result.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    .plagiarism {
+        background: rgba(255, 0, 56, 0.1);
+        color: var(--hacker-red);
+        border-left: 3px solid var(--hacker-red);
+        animation: dangerPulse 1.5s infinite alternate,
+                   shake 0.5s ease-in-out;
+    }
+    
+    .no-plagiarism {
+        background: rgba(10, 255, 10, 0.1);
+        color: var(--matrix-green);
+        border-left: 3px solid var(--matrix-green);
+        animation: successPulse 3s infinite alternate;
+    }
+    
+    @keyframes dangerPulse {
+        0% { box-shadow: 0 0 10px rgba(255, 0, 56, 0.1); }
+        100% { box-shadow: 0 0 30px rgba(255, 0, 56, 0.3); }
+    }
+    
+    @keyframes successPulse {
+        0% { box-shadow: 0 0 10px rgba(10, 255, 10, 0.1); }
+        100% { box-shadow: 0 0 30px rgba(10, 255, 10, 0.3); }
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    
+    .loading {
+        display: none;
+        margin: 20px auto;
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(0, 247, 255, 0.1);
+        border-radius: 50%;
+        border-top-color: var(--cyber-blue);
+        animation: spin 1s linear infinite;
+        position: relative;
+    }
+    
+    .loading::before {
+        content: "";
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        right: -5px;
+        bottom: -5px;
+        border: 3px solid rgba(10, 255, 10, 0.1);
+        border-radius: 50%;
+        border-top-color: var(--matrix-green);
+        animation: spinReverse 1.5s linear infinite;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    @keyframes spinReverse {
+        to { transform: rotate(-360deg); }
+    }
+    
+    /* Binary rain effect */
+    .binary-rain {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        opacity: 0.15;
+        pointer-events: none;
+    }
+
+    /* Signature/credits section */
+    .credits {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        color: var(--matrix-green);
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.8rem;
+        text-align: right;
+        opacity: 0.7;
+        text-shadow: 0 0 5px rgba(10, 255, 10, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .credits:hover {
+        opacity: 1;
+        text-shadow: 0 0 10px rgba(10, 255, 10, 0.7);
+    }
+
+    .credits-line {
+        margin-bottom: 3px;
+        position: relative;
+        padding-right: 10px;
+    }
+
+    .credits-line::after {
+        content: "_";
+        position: absolute;
+        right: 0;
+        animation: cursorBlink 1s infinite;
+    }
+
+    .flicker {
+        animation: textFlicker 3s infinite;
+    }
+
+    @keyframes cursorBlink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+
+    @keyframes textFlicker {
+        0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+            opacity: 1;
+        }
+        20%, 22%, 24%, 55% {
+            opacity: 0.3;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .container {
+            padding: 20px;
+            width: 95%;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+        }
+        
+        textarea {
+            height: 150px;
+        }
+
+        .credits {
+            font-size: 0.7rem;
+            bottom: 10px;
+            right: 10px;
+        }
+    }
+</style>
+<body>
+    <div class="binary-rain" id="binaryRain"></div>
+    <div class="container animate__animated animate__fadeIn">
+        <h1 class="animate__animated animate__fadeInDown">PLAGIARISM_SCAN.EXE</h1>
+        <p class="description animate__animated animate__fadeIn animate__delay-1s">
+            > INITIALIZING TEXT ANALYSIS MODULE<br>
+            > READY TO SCAN INPUT FOR DUPLICATE PATTERNS<br>
+            > PASTE CONTENT BELOW TO BEGIN VERIFICATION PROCESS
+        </p>
+        <form action="/detect" method="post" id="plagiarismForm">
+            <div class="input-group animate__animated animate__fadeIn animate__delay-2s">
+                <textarea name="text" placeholder="> ENTER TEXT TO ANALYZE..." required></textarea>
+            </div>
+            <button type="submit" class="animate__animated animate__fadeIn animate__delay-3s" id="checkButton">
+                INITIATE SCAN
+            </button>
+            <div class="loading" id="loadingSpinner"></div>
+        </form>
+        {% if result %}
+            <div class="result show {% if result == 'Plagiarism Detected' %}plagiarism{% else %}no-plagiarism{% endif %} animate__animated animate__fadeIn">
+                > SCAN RESULT: {{ result }} <
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Signature Section -->
+    <div class="credits animate__animated animate__fadeIn animate__delay-4s">
+        <div class="credits-line">> SYSTEM_CREDITS_LOADED</div>
+        <div class="credits-line">> DEVELOPER: ABHITENDRA_SINGH</div>
+        <div class="credits-line">> VERSION: 1.0.0</div>
+        <div class="credits-line flicker">> COPYRIGHT_2025</div>
+    </div>
+
+    <script>
+        // Binary rain effect
+        const binaryRain = document.getElementById('binaryRain');
+        const chars = "01";
+        
+        function createBinaryRain() {
+            const columns = Math.floor(window.innerWidth / 20);
+            let html = '';
+            
+            for (let i = 0; i < columns; i++) {
+                const duration = Math.random() * 5 + 5;
+                const delay = Math.random() * 5;
+                const opacity = Math.random() * 0.5 + 0.1;
+                
+                html += `
+                    <div style="
+                        position: absolute;
+                        top: -100px;
+                        left: ${i * 20}px;
+                        width: 15px;
+                        color: var(--matrix-green);
+                        font-family: 'Share Tech Mono', monospace;
+                        font-size: 18px;
+                        animation: fall ${duration}s linear ${delay}s infinite;
+                        opacity: ${opacity};
+                    ">
+                        ${generateBinaryString(20)}
+                    </div>
+                `;
+            }
+            
+            binaryRain.innerHTML = html;
+        }
+        
+        function generateBinaryString(length) {
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+        
+        document.addEventListener('DOMContentLoaded', createBinaryRain);
+        window.addEventListener('resize', createBinaryRain);
+        
+        // Form submission handling
+        document.getElementById('plagiarismForm').addEventListener('submit', function(e) {
+            const button = document.getElementById('checkButton');
+            const spinner = document.getElementById('loadingSpinner');
+            const resultDiv = document.querySelector('.result');
+            
+            // Show loading spinner
+            button.style.display = 'none';
+            spinner.style.display = 'block';
+            
+            // Hide previous result if exists
+            if (resultDiv) {
+                resultDiv.classList.remove('show');
+            }
+            
+            // Add typing effect to textarea
+            const textarea = document.querySelector('textarea');
+            if (textarea.value.trim() !== '') {
+                textarea.style.animation = 'none';
+                void textarea.offsetWidth; // Trigger reflow
+                textarea.style.animation = 'textareaGlow 0.5s alternate 3';
+            }
+        });
+        
+        // Add animation to textarea when focused
+        const textarea = document.querySelector('textarea');
+        textarea.addEventListener('focus', function() {
+            this.style.transform = 'scale(1.01)';
+            this.style.boxShadow = 'inset 0 0 20px rgba(0, 247, 255, 0.6), 0 0 30px rgba(0, 247, 255, 0.3)';
+        });
+        
+        textarea.addEventListener('blur', function() {
+            this.style.transform = 'scale(1)';
+            this.style.boxShadow = 'inset 0 0 10px rgba(0, 0, 0, 0.5)';
+        });
+    </script>
+</body>
+</html>
